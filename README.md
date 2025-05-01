@@ -1,8 +1,8 @@
-# Marumbi Backend
+# Marumbi Backend - Versão Mínima
 
-Um servidor Java Spring Boot com PostgreSQL para o projeto Marumbi, configurado para deploy na Railway.
+Esta é uma versão mínima do servidor Java Spring Boot para o projeto Marumbi, otimizada para deploy na Railway.
 
-## Estrutura do Projeto
+## Estrutura Simplificada
 
 ```
 marumbi-backend/
@@ -12,61 +12,46 @@ marumbi-backend/
 │       │   └── br/
 │       │       └── com/
 │       │           └── marumbi/
-│       │               ├── controller/
-│       │               │   ├── ItemController.java
-│       │               │   └── StatusController.java
-│       │               ├── model/
-│       │               │   └── Item.java
-│       │               ├── repository/
-│       │               │   └── ItemRepository.java
-│       │               ├── service/
-│       │               │   └── ItemService.java
 │       │               └── MarumbiBackendApplication.java
 │       └── resources/
 │           └── application.properties
 ├── pom.xml
-├── Procfile
+├── Dockerfile
+├── railway.toml
 └── README.md
 ```
 
-## Configuração do Banco de Dados
+## O que foi alterado
 
-O projeto está configurado para conectar-se a um banco de dados PostgreSQL na Railway com as seguintes credenciais:
+1. **Remoção temporária da dependência do banco de dados**:
+   - Para garantir uma inicialização rápida e resolver problemas de healthcheck
+   - O banco de dados será integrado após o deploy inicial bem-sucedido
 
-- **URL**: jdbc:postgresql://yamabiko.proxy.rlwy.net:53670/railway
-- **Usuário**: postgres
-- **Porta**: 53670
-- **Database**: railway
+2. **Simplificação da aplicação**:
+   - Apenas com endpoints essenciais (/ e /health)
+   - Sem dependências complexas
 
-## Endpoints da API
+3. **Otimização para Railway**:
+   - Configurações específicas para o ambiente Railway
+   - Healthcheck configurado adequadamente
 
-- `GET /` - Verifica se o servidor está rodando
-- `GET /db-status` - Verifica a conexão com o banco de dados
-- `GET /api/items` - Lista todos os itens
-- `GET /api/items/{id}` - Obtém um item por ID
-- `POST /api/items` - Cria um novo item
-- `PUT /api/items/{id}` - Atualiza um item existente
-- `DELETE /api/items/{id}` - Exclui um item
+## Endpoints Disponíveis
+
+- `GET /` - Página inicial simples
+- `GET /health` - Endpoint de healthcheck
 
 ## Como Executar Localmente
 
-1. Clone o repositório
-2. Execute: `mvn spring-boot:run`
-3. Acesse: http://localhost:8080
+```bash
+mvn spring-boot:run
+```
+
+## Próximos Passos (Após Deploy Bem-Sucedido)
+
+1. Reintegrar a conexão com o PostgreSQL
+2. Adicionar as classes de modelo, repositório, serviço e controlador
+3. Implementar as funcionalidades completas da API
 
 ## Deploy na Railway
 
-1. Crie uma conta na Railway
-2. Crie um novo projeto
-3. Conecte seu repositório GitHub
-4. Configure as variáveis de ambiente:
-   ```
-   SPRING_DATASOURCE_URL=jdbc:postgresql://yamabiko.proxy.rlwy.net:53670/railway
-   SPRING_DATASOURCE_USERNAME=postgres
-   SPRING_DATASOURCE_PASSWORD=ofjYLQLWvYvxjXHwTXUlVyAnnGwuIDsC
-   ```
-5. Configure:
-   - Build Command: `./mvnw clean package -DskipTests`
-   - Start Command: `java -jar target/marumbi-backend-0.0.1-SNAPSHOT.jar`
-
-O deploy será automático após cada push para a branch principal.
+Após o primeiro deploy bem-sucedido, você poderá adicionar o resto das funcionalidades gradualmente.
