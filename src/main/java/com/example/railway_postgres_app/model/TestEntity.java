@@ -1,4 +1,4 @@
-package com.example.railway_postgres_app_maven.model;
+package com.example.railway_postgres_app.model;
 
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;

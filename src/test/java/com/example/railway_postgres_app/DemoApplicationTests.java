@@ -1,4 +1,4 @@
-package com.example.railway_postgres_app_maven;
+package com.example.railway_postgres_app;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
