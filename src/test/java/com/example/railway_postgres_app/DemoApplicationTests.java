@@ -1,10 +1,10 @@
-package br.com.marumbi;
+package com.example.railway_postgres_app;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
 
 @SpringBootTest
-class MarumbiBackendApplicationTests {
+class DemoApplicationTests {
 
 	@Test
 	void contextLoads() {

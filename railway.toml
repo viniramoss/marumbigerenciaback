@@ -1,7 +1,0 @@
-[build]
-builder = "NIXPACKS"
-
-[deploy]
-startCommand = "java -jar target/marumbi-backend-0.0.1-SNAPSHOT.jar"
-healthcheckPath = "/health"
-healthcheckTimeout = 60
