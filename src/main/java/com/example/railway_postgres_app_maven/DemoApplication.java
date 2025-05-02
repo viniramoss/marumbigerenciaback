@@ -1,4 +1,4 @@
-package com.example.railway_postgres_app;
+package com.example.railway_postgres_app_maven;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;

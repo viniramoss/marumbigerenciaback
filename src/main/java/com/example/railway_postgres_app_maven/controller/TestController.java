@@ -1,7 +1,7 @@
-package com.example.railway_postgres_app.controller;
+package com.example.railway_postgres_app_maven.controller;
 
-import com.example.railway_postgres_app.model.TestEntity;
-import com.example.railway_postgres_app.repository.TestRepository;
+import com.example.railway_postgres_app_maven.model.TestEntity;
+import com.example.railway_postgres_app_maven.repository.TestRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -17,13 +17,16 @@ public class TestController {
     public ResponseEntity<String> testConnection() {
         try {
             // Try to save a simple entity to test the connection and table creation
-            TestEntity entity = new TestEntity("Connection test successful!");
+            TestEntity entity = new TestEntity("Connection test successful (Maven)!");
             testRepository.save(entity);
             // Optionally, you could retrieve it or count entities
             long count = testRepository.count();
-            return ResponseEntity.ok("Database connection successful! Table 'test_entity' exists and has " + count + " entries.");
+            return ResponseEntity.ok("Database connection successful! Table 'test_entity' exists and has " + count + " entries (Maven project).");
         } catch (Exception e) {
             // Log the exception for debugging
+            // import org.slf4j.Logger;
+            // import org.slf4j.LoggerFactory;
+            // private static final Logger logger = LoggerFactory.getLogger(TestController.class);
             // logger.error("Database connection failed", e);
             return ResponseEntity.status(500).body("Database connection failed: " + e.getMessage());
         }
