@@ -1,5 +1,4 @@
-package br.com.marumbi.controller;
-
+package com.example.railway_postgres_app.controller;
 import br.com.marumbi.model.Despesa;
 import br.com.marumbi.service.DespesaService;
 import lombok.RequiredArgsConstructor;

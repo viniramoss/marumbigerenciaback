@@ -1,4 +1,4 @@
-package br.com.marumbi.controller;
+package com.example.railway_postgres_app.controller;
 
 import lombok.Data;
 import lombok.RequiredArgsConstructor;

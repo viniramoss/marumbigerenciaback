@@ -1,4 +1,4 @@
-package br.com.marumbi.model;
+package com.example.railway_postgres_app.model;
 
 import jakarta.persistence.*;
 import jakarta.validation.constraints.*;

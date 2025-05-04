@@ -1,4 +1,4 @@
-package br.com.marumbi.service;
+package br.com.railway_postgres_app.service;
 
 import br.com.marumbi.model.Despesa;
 import br.com.marumbi.repository.DespesaRepository;
