@@ -6,11 +6,13 @@ import lombok.Data;
 import java.math.BigDecimal;
 import java.time.LocalDate;
 
-@Entity @Table(name = "despesa")
-@Data                                        // Lombok gera tudo
+@Entity 
+@Table(name = "despesa")
+@Data
 public class Despesa {
 
-  @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
+  @Id 
+  @GeneratedValue(strategy = GenerationType.IDENTITY)
   private Long id;
 
   @NotNull
@@ -24,7 +26,8 @@ public class Despesa {
   private String banco;
   private String metodo;
 
-  @NotNull @PositiveOrZero
+  @NotNull 
+  @PositiveOrZero
   private BigDecimal valor;
 
   @NotNull
