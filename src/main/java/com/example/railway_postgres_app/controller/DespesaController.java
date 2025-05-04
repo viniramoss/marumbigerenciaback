@@ -1,6 +1,6 @@
 package com.example.railway_postgres_app.controller;
-import br.com.marumbi.model.Despesa;
-import br.com.marumbi.service.DespesaService;
+import br.com.railway_postgres_app.model.Despesa;
+import br.com.railway_postgres_app.service.DespesaService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;

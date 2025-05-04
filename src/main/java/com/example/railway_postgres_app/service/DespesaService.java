@@ -1,6 +1,6 @@
 package br.com.railway_postgres_app.service;
 
-import br.com.marumbi.model.Despesa;
+import br.com.marumbi.railway_postgres_app.Despesa;
 import br.com.marumbi.repository.DespesaRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
