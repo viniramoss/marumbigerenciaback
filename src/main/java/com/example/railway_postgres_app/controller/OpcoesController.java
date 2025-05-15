@@ -1,22 +1,24 @@
 package com.example.railway_postgres_app.controller;
 
+import com.example.railway_postgres_app.model.Banco;
+import com.example.railway_postgres_app.model.CapitalGiro;
+import com.example.railway_postgres_app.model.MetodoPagamento;
+import com.example.railway_postgres_app.repository.BancoRepository;
+import com.example.railway_postgres_app.repository.CapitalGiroRepository;
+import com.example.railway_postgres_app.repository.MetodoPagamentoRepository;
+
 import lombok.Data;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.io.File;
-import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
+import java.math.BigDecimal;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.core.type.TypeReference;
+import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/api/opcoes")
@@ -24,23 +26,77 @@ import com.fasterxml.jackson.core.type.TypeReference;
 @RequiredArgsConstructor
 public class OpcoesController {
 
-    private static final String OPCOES_FILE = "opcoes.json";
-    private final ObjectMapper mapper = new ObjectMapper();
+    private final BancoRepository bancoRepository;
+    private final MetodoPagamentoRepository metodoPagamentoRepository;
+    private final CapitalGiroRepository capitalGiroRepository;
 
     @GetMapping
     public ResponseEntity<Map<String, List<OpcaoDTO>>> getOpcoes() {
-        Map<String, List<OpcaoDTO>> opcoes = loadOptions();
+        Map<String, List<OpcaoDTO>> opcoes = new HashMap<>();
+        
+        // Converter bancos para DTOs
+        List<OpcaoDTO> bancos = bancoRepository.findAll().stream()
+            .map(banco -> new OpcaoDTO(banco.getCodigo(), banco.getNome()))
+            .collect(Collectors.toList());
+        
+        // Converter métodos de pagamento para DTOs
+        List<OpcaoDTO> metodos = metodoPagamentoRepository.findAll().stream()
+            .map(metodo -> new OpcaoDTO(metodo.getCodigo(), metodo.getNome()))
+            .collect(Collectors.toList());
+        
+        opcoes.put("bancos", bancos);
+        opcoes.put("metodos", metodos);
+        
         return ResponseEntity.ok(opcoes);
     }
 
     @PostMapping
     public ResponseEntity<Map<String, List<OpcaoDTO>>> saveOpcoes(@RequestBody Map<String, List<OpcaoDTO>> opcoes) {
         try {
-            // Salva as opções em um arquivo JSON
-            File file = new File(OPCOES_FILE);
-            mapper.writeValue(file, opcoes);
+            if (opcoes.containsKey("bancos")) {
+                List<OpcaoDTO> bancos = opcoes.get("bancos");
+                
+                // Limpar bancos existentes e adicionar os novos
+                for (OpcaoDTO opcaoDTO : bancos) {
+                    bancoRepository.findByCodigo(opcaoDTO.getId())
+                        .ifPresentOrElse(
+                            banco -> {
+                                banco.setNome(opcaoDTO.getLabel());
+                                bancoRepository.save(banco);
+                            },
+                            () -> {
+                                Banco novoBanco = new Banco();
+                                novoBanco.setCodigo(opcaoDTO.getId());
+                                novoBanco.setNome(opcaoDTO.getLabel());
+                                bancoRepository.save(novoBanco);
+                            }
+                        );
+                }
+            }
+            
+            if (opcoes.containsKey("metodos")) {
+                List<OpcaoDTO> metodos = opcoes.get("metodos");
+                
+                // Limpar métodos existentes e adicionar os novos
+                for (OpcaoDTO opcaoDTO : metodos) {
+                    metodoPagamentoRepository.findByCodigo(opcaoDTO.getId())
+                        .ifPresentOrElse(
+                            metodo -> {
+                                metodo.setNome(opcaoDTO.getLabel());
+                                metodoPagamentoRepository.save(metodo);
+                            },
+                            () -> {
+                                MetodoPagamento novoMetodo = new MetodoPagamento();
+                                novoMetodo.setCodigo(opcaoDTO.getId());
+                                novoMetodo.setNome(opcaoDTO.getLabel());
+                                metodoPagamentoRepository.save(novoMetodo);
+                            }
+                        );
+                }
+            }
+            
             return ResponseEntity.ok(opcoes);
-        } catch (IOException e) {
+        } catch (Exception e) {
             e.printStackTrace();
             return ResponseEntity.internalServerError().build();
         }
@@ -49,18 +105,18 @@ public class OpcoesController {
     @PostMapping("/salvar-capital")
     public ResponseEntity<Map<String, Object>> salvarCapitalGiro(@RequestBody CapitalGiroDTO capitalDto) {
         try {
-            // Carregar opções existentes
-            Map<String, Object> opcoes = loadAllOptions();
+            // Criar nova entrada de capital de giro
+            CapitalGiro capitalGiro = new CapitalGiro();
+            capitalGiro.setValor(BigDecimal.valueOf(capitalDto.getCapitalGiro()));
+            capitalGiro.setDataAtualizacao(LocalDateTime.now());
             
-            // Adicionar ou atualizar o valor de Capital de Giro
-            opcoes.put("capitalGiro", capitalDto.getCapitalGiro());
+            capitalGiroRepository.save(capitalGiro);
             
-            // Salvar de volta no arquivo
-            File file = new File(OPCOES_FILE);
-            mapper.writeValue(file, opcoes);
+            Map<String, Object> response = new HashMap<>();
+            response.put("capitalGiro", capitalDto.getCapitalGiro());
             
-            return ResponseEntity.ok(opcoes);
-        } catch (IOException e) {
+            return ResponseEntity.ok(response);
+        } catch (Exception e) {
             e.printStackTrace();
             return ResponseEntity.internalServerError().build();
         }
@@ -68,60 +124,30 @@ public class OpcoesController {
     
     @GetMapping("/capital-giro")
     public ResponseEntity<Map<String, Object>> getCapitalGiro() {
-        Map<String, Object> opcoes = loadAllOptions();
-        
-        // Se não existir capital de giro, retornar zero
-        if (!opcoes.containsKey("capitalGiro")) {
-            opcoes.put("capitalGiro", 0.0);
-        }
+        // Buscar o capital de giro mais recente
+        CapitalGiro capitalGiro = capitalGiroRepository.findTopByOrderByDataAtualizacaoDesc();
         
         Map<String, Object> response = new HashMap<>();
-        response.put("capitalGiro", opcoes.get("capitalGiro"));
+        if (capitalGiro != null) {
+            response.put("capitalGiro", capitalGiro.getValor());
+        } else {
+            response.put("capitalGiro", 0.0);
+        }
         
         return ResponseEntity.ok(response);
-    }
-
-    private Map<String, List<OpcaoDTO>> loadOptions() {
-        Map<String, List<OpcaoDTO>> opcoes = new HashMap<>();
-        opcoes.put("bancos", new ArrayList<>());
-        opcoes.put("metodos", new ArrayList<>());
-
-        try {
-            Path path = Paths.get(OPCOES_FILE);
-            if (Files.exists(path)) {
-                // Usando TypeReference que é mais simples e evita problemas
-                TypeReference<Map<String, List<OpcaoDTO>>> typeRef = 
-                    new TypeReference<Map<String, List<OpcaoDTO>>>() {};
-                opcoes = mapper.readValue(path.toFile(), typeRef);
-            }
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-
-        return opcoes;
-    }
-    
-    private Map<String, Object> loadAllOptions() {
-        Map<String, Object> opcoes = new HashMap<>();
-        
-        try {
-            Path path = Paths.get(OPCOES_FILE);
-            if (Files.exists(path)) {
-                TypeReference<Map<String, Object>> typeRef = 
-                    new TypeReference<Map<String, Object>>() {};
-                opcoes = mapper.readValue(path.toFile(), typeRef);
-            }
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-        
-        return opcoes;
     }
 
     @Data
     public static class OpcaoDTO {
         private String id;
         private String label;
+        
+        public OpcaoDTO() {}
+        
+        public OpcaoDTO(String id, String label) {
+            this.id = id;
+            this.label = label;
+        }
     }
     
     @Data
