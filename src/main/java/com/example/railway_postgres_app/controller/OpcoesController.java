@@ -46,6 +46,41 @@ public class OpcoesController {
         }
     }
 
+    @PostMapping("/salvar-capital")
+    public ResponseEntity<Map<String, Object>> salvarCapitalGiro(@RequestBody CapitalGiroDTO capitalDto) {
+        try {
+            // Carregar opções existentes
+            Map<String, Object> opcoes = loadAllOptions();
+            
+            // Adicionar ou atualizar o valor de Capital de Giro
+            opcoes.put("capitalGiro", capitalDto.getCapitalGiro());
+            
+            // Salvar de volta no arquivo
+            File file = new File(OPCOES_FILE);
+            mapper.writeValue(file, opcoes);
+            
+            return ResponseEntity.ok(opcoes);
+        } catch (IOException e) {
+            e.printStackTrace();
+            return ResponseEntity.internalServerError().build();
+        }
+    }
+    
+    @GetMapping("/capital-giro")
+    public ResponseEntity<Map<String, Object>> getCapitalGiro() {
+        Map<String, Object> opcoes = loadAllOptions();
+        
+        // Se não existir capital de giro, retornar zero
+        if (!opcoes.containsKey("capitalGiro")) {
+            opcoes.put("capitalGiro", 0.0);
+        }
+        
+        Map<String, Object> response = new HashMap<>();
+        response.put("capitalGiro", opcoes.get("capitalGiro"));
+        
+        return ResponseEntity.ok(response);
+    }
+
     private Map<String, List<OpcaoDTO>> loadOptions() {
         Map<String, List<OpcaoDTO>> opcoes = new HashMap<>();
         opcoes.put("bancos", new ArrayList<>());
@@ -65,10 +100,32 @@ public class OpcoesController {
 
         return opcoes;
     }
+    
+    private Map<String, Object> loadAllOptions() {
+        Map<String, Object> opcoes = new HashMap<>();
+        
+        try {
+            Path path = Paths.get(OPCOES_FILE);
+            if (Files.exists(path)) {
+                TypeReference<Map<String, Object>> typeRef = 
+                    new TypeReference<Map<String, Object>>() {};
+                opcoes = mapper.readValue(path.toFile(), typeRef);
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        
+        return opcoes;
+    }
 
     @Data
     public static class OpcaoDTO {
         private String id;
         private String label;
+    }
+    
+    @Data
+    public static class CapitalGiroDTO {
+        private Double capitalGiro;
     }
 }
