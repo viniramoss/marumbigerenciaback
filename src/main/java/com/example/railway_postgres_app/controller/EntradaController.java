@@ -62,8 +62,6 @@ public class EntradaController {
   @PutMapping("/{id}")
   public ResponseEntity<Entrada> atualizar(@PathVariable Long id, @RequestBody Entrada entrada) {
       try {
-          // Verifica se a entrada existe
-          Entrada atual = svc.buscarPorId(id);
           
           // Atualiza os campos
           entrada.setId(id);
