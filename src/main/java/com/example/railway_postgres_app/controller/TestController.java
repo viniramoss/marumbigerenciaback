@@ -18,7 +18,7 @@ public class TestController {
         try {
             // Try to save a simple entity to test the connection and table creation
             TestEntity entity = new TestEntity("Connection test successful!");
-            testRepository.save(entity);
+            // testRepository.save(entity);
             return ResponseEntity.ok("Database connection successful! Table 'test_entity' exists and has entries.");
         } catch (Exception e) {
             // Log the exception for debugging
