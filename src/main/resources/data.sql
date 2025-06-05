@@ -9,4 +9,6 @@
 -- INSERT INTO encargos (tipo, valor, loja, mes_ano, observacoes, data_criacao) VALUES ('INSS', 0.00, 'UN1', '2024-01', 'Observação', CURRENT_DATE);
 
 -- Exemplo de insert para outros:
--- INSERT INTO outros (tipo, descricao, valor, funcionario_id, loja, mes_ano, observacoes, data_criacao) VALUES ('BONUS', 'Descrição', 0.00, NULL, 'UN1', '2024-01', 'Observação', CURRENT_DATE); 
+-- INSERT INTO outros (tipo, descricao, valor, funcionario_id, loja, mes_ano, observacoes, data_criacao) VALUES ('BONUS', 'Descrição', 0.00, NULL, 'UN1', '2024-01', 'Observação', CURRENT_DATE);
+
+-- Arquivo vazio de dados iniciais 
