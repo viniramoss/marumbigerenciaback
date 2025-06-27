@@ -49,6 +49,19 @@ public class FuncionarioController {
                     funcionario.setNome(funcionarioAtualizado.getNome());
                     funcionario.setSalario(funcionarioAtualizado.getSalario());
                     funcionario.setLoja(funcionarioAtualizado.getLoja());
+                    if (funcionarioAtualizado.getPago() != null) {
+                        funcionario.setPago(funcionarioAtualizado.getPago());
+                    }
+                    return ResponseEntity.ok(funcionarioRepository.save(funcionario));
+                })
+                .orElse(ResponseEntity.notFound().build());
+    }
+
+    @PatchMapping("/{id}/pago")
+    public ResponseEntity<Funcionario> marcarComoPago(@PathVariable Long id, @RequestParam Boolean pago) {
+        return funcionarioRepository.findById(id)
+                .map(funcionario -> {
+                    funcionario.setPago(pago);
                     return ResponseEntity.ok(funcionarioRepository.save(funcionario));
                 })
                 .orElse(ResponseEntity.notFound().build());

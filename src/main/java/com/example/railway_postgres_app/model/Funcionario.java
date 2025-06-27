@@ -19,6 +19,9 @@ public class Funcionario {
     @Column(nullable = false)
     private String loja;
     
+    @Column(nullable = false)
+    private Boolean pago = false;
+    
     // Construtores
     public Funcionario() {}
     
@@ -26,6 +29,7 @@ public class Funcionario {
         this.nome = nome;
         this.salario = salario;
         this.loja = loja;
+        this.pago = false;
     }
     
     // Getters e Setters
@@ -40,4 +44,7 @@ public class Funcionario {
     
     public String getLoja() { return loja; }
     public void setLoja(String loja) { this.loja = loja; }
+    
+    public Boolean getPago() { return pago; }
+    public void setPago(Boolean pago) { this.pago = pago; }
 } 
