@@ -19,7 +19,7 @@ public class Funcionario {
     @Column(nullable = false)
     private String loja;
     
-    @Column(nullable = false)
+    @Column(nullable = true)
     private Boolean pago = false;
     
     // Construtores
@@ -45,6 +45,6 @@ public class Funcionario {
     public String getLoja() { return loja; }
     public void setLoja(String loja) { this.loja = loja; }
     
-    public Boolean getPago() { return pago; }
+    public Boolean getPago() { return pago != null ? pago : false; }
     public void setPago(Boolean pago) { this.pago = pago; }
 } 
