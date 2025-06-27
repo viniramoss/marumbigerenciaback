@@ -80,6 +80,15 @@ public class DespesaController {
     return svc.salvar(d);
   }
 
+  @GetMapping("/variaveis/agrupadas")
+  public List<Map<String, Object>> getVariaveisAgrupadas(
+          @RequestParam(required = false) String unidade,
+          @RequestParam(required = false) String dataInicio,
+          @RequestParam(required = false) String dataFim
+  ) {
+    return svc.getVariaveisAgrupadas(unidade, dataInicio, dataFim);
+  }
+
   @DeleteMapping("/{id}")
   public ResponseEntity<Void> excluir(@PathVariable Long id){
     svc.excluir(id);
