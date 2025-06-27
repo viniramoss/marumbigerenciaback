@@ -66,6 +66,19 @@ public class EncargoController {
         }
     }
 
+    @PatchMapping("/{id}/pago")
+    public ResponseEntity<Encargo> marcarEncargoPago(@PathVariable Long id, @RequestParam Boolean pago) {
+        Optional<Encargo> optionalEncargo = encargoRepository.findById(id);
+        
+        if (optionalEncargo.isPresent()) {
+            Encargo encargo = optionalEncargo.get();
+            encargo.setPago(pago);
+            return ResponseEntity.ok(encargoRepository.save(encargo));
+        } else {
+            return ResponseEntity.notFound().build();
+        }
+    }
+
     @DeleteMapping("/{id}")
     public ResponseEntity<?> deleteEncargo(@PathVariable Long id) {
         if (encargoRepository.existsById(id)) {

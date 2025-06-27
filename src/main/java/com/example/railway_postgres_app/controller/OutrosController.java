@@ -73,6 +73,19 @@ public class OutrosController {
         }
     }
 
+    @PatchMapping("/{id}/pago")
+    public ResponseEntity<Outros> marcarOutroPago(@PathVariable Long id, @RequestParam Boolean pago) {
+        Optional<Outros> optionalOutro = outrosRepository.findById(id);
+        
+        if (optionalOutro.isPresent()) {
+            Outros outro = optionalOutro.get();
+            outro.setPago(pago);
+            return ResponseEntity.ok(outrosRepository.save(outro));
+        } else {
+            return ResponseEntity.notFound().build();
+        }
+    }
+
     @DeleteMapping("/{id}")
     public ResponseEntity<?> deleteOutro(@PathVariable Long id) {
         if (outrosRepository.existsById(id)) {

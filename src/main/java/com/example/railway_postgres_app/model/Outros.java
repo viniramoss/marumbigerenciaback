@@ -36,6 +36,9 @@ public class Outros {
     @Column(nullable = false)
     private LocalDate dataCriacao = LocalDate.now();
     
+    @Column(nullable = true)
+    private Boolean pago = false;
+    
     // Construtores
     public Outros() {}
     
@@ -120,5 +123,13 @@ public class Outros {
     
     public void setDataCriacao(LocalDate dataCriacao) {
         this.dataCriacao = dataCriacao;
+    }
+    
+    public Boolean getPago() {
+        return pago != null ? pago : false;
+    }
+    
+    public void setPago(Boolean pago) {
+        this.pago = pago;
     }
 } 
