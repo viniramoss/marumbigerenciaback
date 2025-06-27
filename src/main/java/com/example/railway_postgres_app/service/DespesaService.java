@@ -33,7 +33,7 @@ public class DespesaService {
     
     // Filtrar apenas despesas variáveis
     List<Despesa> variaveisFiltered = todasDespesas.stream()
-        .filter(d -> "VARIAVEL".equalsIgnoreCase(d.getTipo()))
+        .filter(d -> "variavel".equalsIgnoreCase(d.getTipo()))
         .filter(d -> unidade == null || unidade.equalsIgnoreCase(d.getUnidade()))
         .filter(d -> {
             if (dataInicio == null && dataFim == null) return true;
@@ -68,7 +68,7 @@ public class DespesaService {
                         .reduce(BigDecimal.ZERO, BigDecimal::add);
                     
                     dados.put("fornecedor", despesas.get(0).getFornecedor());
-                    dados.put("tipo", "VARIAVEL");
+                    dados.put("tipo", "variavel");
                     dados.put("valor", valorTotal);
                     dados.put("unidade", despesas.get(0).getUnidade());
                     dados.put("pago", true); // Variáveis são sempre pagas
