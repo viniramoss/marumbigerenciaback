@@ -7,6 +7,7 @@ import com.example.railway_postgres_app.repository.DespesaRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.Map;
@@ -72,12 +73,19 @@ public class DespesaFixaController {
     }
 
     @DeleteMapping("/{id}")
+    @Transactional
     public ResponseEntity<Void> excluir(@PathVariable Long id) {
         if (!despesaFixaRepository.existsById(id)) {
             return ResponseEntity.notFound().build();
         }
-        
+
+        // 1) Remove a despesa fixa
         despesaFixaRepository.deleteById(id);
+
+        // 2) Remove todas as retiradas relacionadas (fornecedor começando com "DF-{id}-")
+        String prefixo = "DF-" + id + "-";
+        despesaRepository.deleteByFornecedorStartingWith(prefixo);
+
         return ResponseEntity.ok().build();
     }
 
